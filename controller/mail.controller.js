@@ -33,7 +33,7 @@ exports.sendMail = async (req, res) => {
 
         const mailOptions = {
             ...CONSTANTS.mailOptions,
-            text : 'this is test mail using gmail'
+            text: 'this is test mail using gmail'
         }
 
         const result = await transport.sendMail(mailOptions)
@@ -44,7 +44,7 @@ exports.sendMail = async (req, res) => {
     }
     catch (error) {
         console.log(error)
-        response.send(error)
+        res.send(error)
 
     }
 }
@@ -63,7 +63,7 @@ exports.getUser = async (req, res) => {
     }
     catch (error) {
         console.log(error)
-        response.send(error)
+        res.send(error)
 
     }
 }
@@ -84,7 +84,7 @@ exports.getMails = async (req, res) => {
     }
     catch (error) {
         console.log(error)
-        response.send(error)
+        res.send(error)
 
     }
 }
@@ -104,8 +104,7 @@ exports.getDrafts = async (req, res) => {
     }
     catch (error) {
         console.log(error)
-        response.send(error)
-
+        res.send(error)
     }
 }
 
@@ -128,4 +127,27 @@ exports.readMail = async (req, res) => {
         res.send(error);
     }
 }
+
+exports.latestMail = async (req, res) => {
+    try {
+        const lastCheckedTimestamp = "2023/12/27";
+
+        const url = `https://gmail.googleapis.com/gmail/v1/users/${req.params.email}/messages?q=after:${lastCheckedTimestamp}`;
+
+        const { token } = await oAuthClient.getAccessToken()
+
+        const config = createConfig(url, token)
+
+        const response = await axios(config)
+
+        res.json(response.data)
+
+    }
+    catch (error) {
+        console.log(error)
+        res.send(error)
+    }
+}
+
+
 
